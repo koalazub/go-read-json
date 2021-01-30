@@ -8,51 +8,64 @@ import (
 	"os"
 )
 
-type MapData struct {
-	results []map[string]interface{}
-}
-
-type Review struct {
+type Description struct {
 	Title  string `json:"title"`
 	Review string `json:"review"`
 	Score  int    `json:"score"`
+	Year   int    `json:"year"`
 }
 
 func main() {
-	readFile, err := os.Open("./reviews.json")
+	readReviews, err := os.Open("./reviews.json")
 	if err != nil {
 		log.Printf("Failed to open file!! %+v", err)
 	}
-	returnUnmarshalledData(convertItemsInFileToData(readFile))
-
+	getReview(convertItemsInFileToData(readReviews))
 }
 
 func convertItemsInFileToData(file *os.File) []byte {
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Printf("Unable to read from file %+v - check the directory. Or maybe you fucked up the read somehow", err)
+		fmt.Printf("Unable to read from file %+v - check the directory", err)
 	}
 	return data
 }
 
-func returnUnmarshalledData(data []byte) {
-	//var results MapData
-	var review []Review
-	unMarshalledReviews := json.Unmarshal(data, &review)
+func getReview(reviews []byte) {
+	var reviewDescription []Description
 
+	unMarshalledReviews := json.Unmarshal(reviews, &reviewDescription)
 	if unMarshalledReviews != nil {
 		log.Fatal("Check the reads for the file. Unable to read")
 	}
 
-	starRating := "*"
-	for rev := range review {
-
-		fmt.Printf("%+v\n", review[rev].Score)
-
-		if review[rev].Score % 25 == 0 {
-			starRating += starRating
-			fmt.Printf(starRating + "\n")
-		}
+	for rev := range reviewDescription {
+		reviewDescription := reviewDescription[rev]
+		returnLimitedTweetCount(reviewDescription.Title, reviewDescription.Review, 140)
+		returnRating(reviewDescription.Score)
 	}
+}
 
+func returnLimitedTweetCount(title string, review string, maxTweetLength int) {
+	fmt.Printf("Title: %+v\n", title)
+
+	if len(review) > maxTweetLength {
+		review = review[:maxTweetLength] + "..."
+	}
+	fmt.Printf("Review: %+v\n", review)
+}
+
+func returnRating(score int) {
+	if score <= 25 {
+		fmt.Printf("Rating: %+v\n\n", "*")
+	}
+	if score <= 50 && score > 25 {
+		fmt.Printf("score: %+v\n\n", "**")
+	}
+	if score <= 99 && score > 50 {
+		fmt.Printf("score: %+v\n\n", "****")
+	}
+	if score == 100 {
+		fmt.Printf("Rating: %+v\n\n", "*****")
+	}
 }
