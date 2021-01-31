@@ -11,16 +11,17 @@ type Movies struct {
 	Year  int    `json:"year,omitempty"`
 }
 
-func getMovies(movies []byte) {
-	var movieDescription []Movies
+func getMovies(movies []byte) []Movies {
+	var movieItems []Movies
 
-	unMarshalledReviews := json.Unmarshal(movies, &movieDescription)
+	unMarshalledReviews := json.Unmarshal(movies, &movieItems)
 	if unMarshalledReviews != nil {
 		log.Fatal("Check the reads for the file. Unable to read")
 	}
 
-	for movie := range movieDescription {
-		movieField := movieDescription[movie]
+	for movie := range movieItems {
+		movieField := movieItems[movie]
 		fmt.Printf("Movie title(%+v): %+v", movieField.Year, movieField.Title)
 	}
+	return movieItems
 }

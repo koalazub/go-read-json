@@ -16,6 +16,7 @@ type Description struct {
 func main() {
 	getReview(openFileToData("./reviews.json"))
 	getMovies(openFileToData("./movies.json"))
+
 }
 
 func openFileToData(filename string) []byte {

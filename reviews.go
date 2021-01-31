@@ -15,9 +15,9 @@ func getReview(reviews []byte) {
 	}
 
 	for rev := range reviewDescription {
-		reviewDescription := reviewDescription[rev]
-		returnLimitedTweetCount(reviewDescription.Title, reviewDescription.Review, 140)
-		returnRating(reviewDescription.Score)
+		reviewItems := reviewDescription[rev]
+		returnLimitedTweetCount(reviewItems.Title, reviewItems.Review, 140)
+		returnRating(reviewItems.Score)
 	}
 }
 
